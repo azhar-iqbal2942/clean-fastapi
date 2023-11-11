@@ -7,8 +7,22 @@ from fastapi.responses import JSONResponse
 
 from api import router
 from config.settings import config
-from core.middleware.authentication import AuthBackend
+from core.middleware import AuthBackend, AuthenticationMiddleware
 from core.exceptions import CustomException
+
+
+def on_auth_error(request: Request, exc: Exception):
+    print("on_auth_error")
+    status_code, error_code, message = 401, None, str(exc)
+    if isinstance(exc, CustomException):
+        status_code = int(exc.code)
+        error_code = exc.error_code
+        message = exc.message
+
+    return JSONResponse(
+        status_code=status_code,
+        content={"error_code": error_code, "message": message},
+    )
 
 
 def init_routers(app: FastAPI) -> None:
@@ -17,8 +31,7 @@ def init_routers(app: FastAPI) -> None:
 
 def init_listeners(app: FastAPI) -> None:
     @app.exception_handler(CustomException)
-    async def custom_exception_handler(request: Request, exc: CustomException):
-        print("Exception occured")
+    def custom_exception_handler(request: Request, exc: CustomException):
         return JSONResponse(
             status_code=exc.code,
             content={"error_code": exc.error_code, "message": exc.message},
@@ -38,12 +51,11 @@ def make_middleware() -> List[Middleware]:
             allow_methods=["*"],
             allow_headers=["*"],
         ),
-        # Middleware(
-        #     AuthenticationMiddleware,
-        #     backend=AuthBackend(),
-        #     on_error=on_auth_error,
-        # ),
-        # Middleware(AuthBackend),
+        Middleware(
+            AuthenticationMiddleware,
+            backend=AuthBackend(),
+            on_error=on_auth_error,
+        ),
         # Middleware(ResponseLoggerMiddleware),
     ]
     return middleware
@@ -60,7 +72,6 @@ def create_app() -> FastAPI:
         middleware=make_middleware(),
     )
 
-    # Main router for the API.
     init_routers(app=app)
     init_listeners(app=app)
 

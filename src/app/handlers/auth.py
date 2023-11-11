@@ -1,3 +1,5 @@
+from typing import Annotated
+from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.schemas.auth import UserLoginRequest
@@ -9,9 +11,13 @@ from core.security.password import PasswordHandler
 
 
 class AuthHandler:
-    def login(self, session: Session, user_credentials: UserLoginRequest):
-        service = UserService()
-        user = service.get_user_by_email(session, user_credentials.email)
+    def __init__(
+        self, user_service: Annotated[UserService, Depends(UserService)]
+    ) -> None:
+        self.user_service = user_service
+
+    def login(self, user_credentials: UserLoginRequest):
+        user = self.user_service.get_user_by_email(user_credentials.email)
 
         if not user:
             raise BadRequestException("Invalid credentials")

@@ -1,15 +1,22 @@
+from typing import Annotated
+from fastapi import Depends
 from app.repositories.user import UserRepository
 
 
 class UserService:
-    def get_all_users(self, session):
-        resp = UserRepository().get_all(session=session)
-        return resp
+    def __init__(
+        self, user_repository: Annotated[UserRepository, Depends(UserRepository)]
+    ):
+        self.user_repository = user_repository
 
-    def create_user(self, session, user):
-        resp = UserRepository().create(session=session, user=user)
-        return resp
+    def get_all_users(self):
+        return self.user_repository.get_all()
 
-    def get_user_by_email(self, session, email):
-        resp = UserRepository().get_by_email(session, email)
-        return resp
+    def create_user(self, user):
+        return self.user_repository.create(user=user)
+
+    def get_user_by_email(self, email: str):
+        return self.user_repository.get_by_email(email=email)
+
+    def get_user_by_id(self, id: int):
+        return self.user_repository.get_by_id(id=id)
