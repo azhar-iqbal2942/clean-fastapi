@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: src/Dockerfile
+    command: >
+      bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; 
+      python manage.py init-postgres && python manage.py runserver'
+    ports:
+      - 8000:8000
+    environment:
+      - SQLALCHEMY_DATABASE_URL=postgresql://postgres:12345678@db:5432/fast
+      - POSTGRES_DB=fast
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOSTNAME=db
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_PORT=5432
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=fast
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+    ports:
+      - 5432:5432
