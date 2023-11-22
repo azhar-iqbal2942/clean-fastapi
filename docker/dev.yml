@@ -7,7 +7,7 @@ services:
       dockerfile: src/Dockerfile
     command: >
       bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; 
-      python manage.py init-postgres && python manage.py runserver'
+      python manage.py init-postgres && alembic upgrade heads && python manage.py runserver'
     ports:
       - 8000:8000
     environment:
