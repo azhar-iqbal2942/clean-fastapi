@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "clean-fast-api"
+version = "0.1.0"
+description = ""
+authors = ["Azhar Iqbal <azhariqbal2942@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.104.1"}
+sqlalchemy = "^2.0.23"
+psycopg2-binary = "^2.9.9"
+passlib = "^1.7.4"
+python-jose = "^3.3.0"
+bcrypt = "^4.0.1"
+click = "^8.1.7"
+alembic = "^1.12.1"
+environs = "^9.5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

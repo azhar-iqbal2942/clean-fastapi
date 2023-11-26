@@ -30,7 +30,6 @@ class Settings(BaseSettings):
     # POOL_RESET_ON_RETURN = "rollback"
     # POOL_TIMEOUT_IN_SECONDS = 30
     # POOL = "~sqlalchemy.pool.QueuePsool"
-    print("Env =>", env("SQLALCHEMY_DATABASE_URL"))
 
 
 config: Settings = Settings()  # type: ignore
