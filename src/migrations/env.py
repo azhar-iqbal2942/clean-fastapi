@@ -1,14 +1,11 @@
 from logging.config import fileConfig
 
-from environs import Env
-
 from alembic import context
 from alembic.config import Config
 
 from app.models import load_all_models
+from config.settings import env
 
-env = Env()
-env.read_env()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

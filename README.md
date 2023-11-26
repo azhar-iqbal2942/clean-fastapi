@@ -10,3 +10,10 @@ python = 3.11
 ```bash
 make run
 ```
+
+## Docker Commands
+```bash
+# Go to src directory and run the following commands.
+python manage.py compose build app
+python manage.py compose up -d
+```
